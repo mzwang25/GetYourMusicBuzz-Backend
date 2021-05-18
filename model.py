@@ -135,7 +135,6 @@ def predict_w_features(features):
     return results
 
 def predict(jsonobj):
-    input = getTrainArray(jsonobj)
+    input, _ = getTrainArray(jsonobj)
     prediction = predict_w_features(input)
-    print(prediction)
     return prediction

@@ -19,7 +19,13 @@ def p():
 
     data = (request.get_json())
     result = predict(data)
-    return "Done"
+
+    response = app.response_class(
+        response=json.dumps(result),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
 
 
 @app.route('/receive',methods=['POST', 'OPTION'])
