@@ -3,6 +3,8 @@ from os import path
 from flask_cors import CORS
 
 from flask import Flask, request
+from model import *
+
 app = Flask(__name__)
 CORS(app)
 
@@ -10,9 +12,18 @@ CORS(app)
 def index():
     return 'Hello I am GetYourMusicBuzz Backend'
 
+@app.route('/predict',methods=['POST', 'OPTION'])
+def p():
+    if(request.method != 'POST'):
+      return "BAD"
+
+    data = (request.get_json())
+    result = predict(data)
+    return "Done"
+
 
 @app.route('/receive',methods=['POST', 'OPTION'])
-def login():
+def receive():
     if(request.method != 'POST'):
       return "BAD"
 
