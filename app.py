@@ -27,7 +27,6 @@ def p():
     )
     return response
 
-
 @app.route('/receive',methods=['POST', 'OPTION'])
 def receive():
     if(request.method != 'POST'):
@@ -36,13 +35,8 @@ def receive():
     data = (request.get_json())
 
     f1 = None
-    f2 = None
-    if (not path.exists("train_data.txt")):
-        f1 = open("train_data.txt", "w+")
-        f2 = open("train_label.txt", "w+")
-    else:
-        f1 = open("train_data.txt", "a+")
-        f2 = open("train_label.txt", "a+")
+
+    f1 = open("train_data.txt", "w+")
    
 
     f1.write(str(data))
@@ -50,6 +44,8 @@ def receive():
 
     f1.close()
     f2.close()
+
+    train_entire_model()
 
     return "GOT!"
 

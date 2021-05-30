@@ -72,6 +72,11 @@ def getTrainArray(jsonobj):
     except:
         pass
 
+    try:
+        train.append(jsonobj["username"])
+    except:
+        train.append("")
+
     return train, label
 
 def train_entire_model():
@@ -87,21 +92,64 @@ def train_entire_model():
         instance = instance.replace('\'', '\"')
         jsoninstances.append(json.loads(instance))
 
+    # get usernames here
+
+    # datasets w different usernames
+
     ########################## Extract Data features ##########################
 
 
     ########### Get training instances ###########
 
 
-    train = []
-    label = []
+    
+    list_usernames = {'': [[], []]} # [[train], [label]]
     for j in jsoninstances:
         t, l = getTrainArray(j)
-        train.append(np.array(t))
-        label.append(l)
+        username = t[-1]
 
-    train = np.array(train)
+        if(username in list_usernames):
+            list_usernames[username][0].append(t[0:-1])  
+            list_usernames[username][1].append(l)  
+            list_usernames[''][0].append(t[0:-1])  
+            list_usernames[''][1].append(l)  
+        else:
+                
+            list_usernames[username] = [[], []]
+            list_usernames[username][0].append(t[0:-1])  
+            list_usernames[username][1].append(l)  
+            list_usernames[''][0].append(t[0:-1])  
+            list_usernames[''][1].append(l)  
+    
+    # train = np.array(train)
+    # y_label_values = []
+    train = []
+    label = []
+    
+    for username in list_usernames:
+        train = np.array(list_usernames[username][0])
+        label = np.array(list_usernames[username][1])
 
+        def train_lin_model(label_index):
+            y_label_values = []
+            for y_label in label:
+                y_label_values.append(y_label[label_index])
+
+            y_label_values = np.array(y_label_values)
+
+            model = LinearRegression()
+            reg = model.fit(train, y_label_values)
+            score = reg.score(train, y_label_values)
+            return reg, score, model
+
+        for label_index in range(len(label_names)):
+            reg, score, model = train_lin_model(label_index)
+            print(label_names[label_index] + " Score = " + str(score))
+
+            filename = username +"_" + label_names[label_index] + '.model'
+            pickle.dump(model, open(filename, 'wb'))
+
+    return
     ########### Train models ###########
 
     def train_lin_model(label_index):
@@ -124,17 +172,24 @@ def train_entire_model():
         pickle.dump(model, open(filename, 'wb'))
 
 # features is just a single dim array of features
-def predict_w_features(features):
+def predict_w_features(features, modelname = ""):
     results = {}
     for i in range(len(label_names)):
         inputs = [features]
-        loaded_model = pickle.load(open(label_names[i] + ".model", 'rb'))
+        loaded_model = pickle.load(open(modelname + "_" + label_names[i] + ".model", 'rb'))
         result = loaded_model.predict(inputs)
         results[label_names[i]] = result[0]
-        #print(label_names[i] + "predicted result = " + str(result))
+        print(label_names[i] + " predicted result = " + str(result))
     return results
 
 def predict(jsonobj):
+    username = jsonobj['username']
     input, _ = getTrainArray(jsonobj)
-    prediction = predict_w_features(input)
+    # jsonobj.getAsJsonObject.remove("email")
+    input = input[0:-1]
+    # del input['username'] 
+    prediction = predict_w_features(input, username)
     return prediction
+
+# train_entire_model()
+# predict_w_features([0, 0, 0, 0, 0, 0, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
