@@ -109,12 +109,15 @@ def train_entire_model():
         username = t[-1]
 
         if(username in list_usernames):
+            if(len(l) != 11):
+              continue
             list_usernames[username][0].append(t[0:-1])  
             list_usernames[username][1].append(l)  
             list_usernames[''][0].append(t[0:-1])  
             list_usernames[''][1].append(l)  
         else:
-                
+            if(len(l) != 11):
+              continue
             list_usernames[username] = [[], []]
             list_usernames[username][0].append(t[0:-1])  
             list_usernames[username][1].append(l)  
@@ -129,6 +132,7 @@ def train_entire_model():
     for username in list_usernames:
         train = np.array(list_usernames[username][0])
         label = np.array(list_usernames[username][1])
+
 
         def train_lin_model(label_index):
             y_label_values = []

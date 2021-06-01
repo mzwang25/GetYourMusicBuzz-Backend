@@ -12,6 +12,18 @@ CORS(app)
 def index():
     return 'Hello I am GetYourMusicBuzz Backend'
 
+@app.route('/train')
+def train():
+    train_entire_model()
+    return 'Hello I am GetYourMusicBuzz Backend'
+
+@app.route('/reset')
+def reset():
+    f1 = open("train_data.txt", "w+")
+    f1.write("")
+    f1.close()
+    return 'Hello I am GetYourMusicBuzz Backend'
+
 @app.route('/predict',methods=['POST', 'OPTION'])
 def p():
     if(request.method != 'POST'):
@@ -36,16 +48,13 @@ def receive():
 
     f1 = None
 
-    f1 = open("train_data.txt", "w+")
+    f1 = open("train_data.txt", "a+")
    
 
     f1.write(str(data))
     f1.write("\n")
 
     f1.close()
-    f2.close()
-
-    train_entire_model()
 
     return "GOT!"
 
