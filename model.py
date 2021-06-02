@@ -133,7 +133,7 @@ def train_entire_model():
         label = np.array(list_usernames[username][1])
 
 
-        if(len(train) < 10):
+        if(len(train) < 2):
             continue
 
         def train_lin_model(label_index):
