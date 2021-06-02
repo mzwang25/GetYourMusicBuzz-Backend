@@ -111,13 +111,12 @@ def train_entire_model():
         if(username in list_usernames):
             if(len(l) != 11):
               continue
+            print(t[0:-1])
             list_usernames[username][0].append(t[0:-1])  
             list_usernames[username][1].append(l)  
             list_usernames[''][0].append(t[0:-1])  
             list_usernames[''][1].append(l)  
         else:
-            if(len(l) != 11):
-              continue
             list_usernames[username] = [[], []]
             list_usernames[username][0].append(t[0:-1])  
             list_usernames[username][1].append(l)  
@@ -134,6 +133,9 @@ def train_entire_model():
         label = np.array(list_usernames[username][1])
 
 
+        if(len(train) < 10):
+            continue
+
         def train_lin_model(label_index):
             y_label_values = []
             for y_label in label:
@@ -141,7 +143,7 @@ def train_entire_model():
 
             y_label_values = np.array(y_label_values)
 
-            model = LinearRegression()
+            model = LinearRegression(normalize=True)
             reg = model.fit(train, y_label_values)
             score = reg.score(train, y_label_values)
             return reg, score, model
@@ -195,7 +197,8 @@ def predict(jsonobj):
     prediction = predict_w_features(input, username)
     return prediction
 
-# train_entire_model()
-# predict_w_features([0, 0, 0, 0, 0, 0, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+train_entire_model()
+predict_w_features([1, 0.0 , 0, 0, 0, 0.5, 0.5, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0])
+#predict_w_features([0, 1, 1, 0, 1, 0, 0, 0.8, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1.0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
 
 #train_entire_model()
